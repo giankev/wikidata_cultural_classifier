@@ -4,13 +4,13 @@ from difflib import SequenceMatcher
 
 class DatasetParser:
 
-  def __init__(self, entity_id, sitelinks, claims, label, description):
+  def __init__(self, item):
 
-    self.entity_id = entity_id
-    self.sitelinks = sitelinks
-    self.claims = claims
-    self.label = label
-    self.description = description
+    self.entity_id = item.get_entity_id()
+    self.sitelinks = item.get_sitelinks()
+    self.claims = item.get_claims()
+    self.label = item.get_label()
+    self.description = item.get_description()
 
   def claims_target(self, properties_to_check: dict = {}) -> dict:
     """
@@ -138,7 +138,7 @@ class DatasetParser:
 if __name__ == '__main__':
     # Esempio di utilizzo
     wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
-    entity = WikidataExtractor(wikidata_url)
+    item = WikidataExtractor(wikidata_url)
     properties_to_check = {
         "P495": "Country of Origin",
         "P17": "Country",
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         "P2012": "Cuisine"
     }
 
-    dataset_parser = DatasetParser(entity.get_entity_id(), entity.get_sitelinks(), entity.get_claims(), entity.get_label(), entity.get_description())
+    dataset_parser = DatasetParser(item)
     target_claims = dataset_parser.claims_target(properties_to_check)
     claims_value = dataset_parser.get_claims_value(target_claims)
     number_sitelinks = dataset_parser.get_number_sitelinks()
