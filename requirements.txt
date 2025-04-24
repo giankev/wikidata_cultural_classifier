@@ -1,0 +1,12 @@
+# wiki
+requests>=2.31
+wikidata>=0.7.0
+wikipedia       # retrieve wikipedia page content
+
+# text2graph, graph2vec
+networkx>=3.0
+karateclub>=1.0.26 # graphs
+pandas>=2.0
+colorama        # colored terminal text
+pyvis           # for graph visualization on a browser
+stopwordsiso    # multi language stopwords

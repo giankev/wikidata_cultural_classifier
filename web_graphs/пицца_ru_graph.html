@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 900px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "hut dominos smoking joes iq", "label": "hut dominos smoking joes iq", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "pizza", "label": "pizza", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "di", "label": "di", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "grano tenero tipo", "label": "grano tenero tipo", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "mare", "label": "mare", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "chicago", "label": "chicago", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "style", "label": "style", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "sicilian", "label": "sicilian", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "aglio", "label": "aglio", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "e", "label": "e", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "olio", "label": "olio", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "alla marinara", "label": "alla marinara", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "napolitana napoli", "label": "napolitana napoli", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "con le cozze", "label": "con le cozze", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "alle vongole", "label": "alle vongole", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "regina", "label": "regina", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "capricciosa", "label": "capricciosa", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "diabola", "label": "diabola", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "al tonno", "label": "al tonno", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "hawaii", "label": "hawaii", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "styles", "label": "styles", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "home run inn", "label": "home run inn", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "kitchen wolfgang pucks", "label": "kitchen wolfgang pucks", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "providence rhode island", "label": "providence rhode island", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "bagels", "label": "bagels", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "margherita", "label": "margherita", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ai", "label": "ai", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "quattro", "label": "quattro", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "xvii", "label": "xvii", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "california", "label": "california", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "st", "label": "st", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "larousse", "label": "larousse", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "hawaiian", "label": "hawaiian", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "taco", "label": "taco", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "bianca", "label": "bianca", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "and", "label": "and", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ric riccardo", "label": "ric riccardo", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "rosatis", "label": "rosatis", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "pizzeria", "label": "pizzeria", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "uno", "label": "uno", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "due", "label": "due", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "english muffin french bread", "label": "english muffin french bread", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "frutti", "label": "frutti", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ike sewell", "label": "ike sewell", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "formaggi", "label": "formaggi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "stagioni", "label": "stagioni", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "gastronomique", "label": "gastronomique", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "canadian", "label": "canadian", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "funghi", "label": "funghi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "grilled", "label": "grilled", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "farina", "label": "farina", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "detroit", "label": "detroit", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "york", "label": "york", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "haven", "label": "haven", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "louis", "label": "louis", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "deep dish", "label": "deep dish", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "thin crust", "label": "thin crust", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "chez panisse berkeley", "label": "chez panisse berkeley", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "new", "label": "new", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u043f\u0438\u0446\u0446\u0430", "label": "\u043f\u0438\u0446\u0446\u0430", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u043a\u0443\u043b\u0438\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0444\u0430\u0431\u0440\u0438\u043a\u0430\u0442\u044b", "label": "\u043a\u0443\u043b\u0438\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0444\u0430\u0431\u0440\u0438\u043a\u0430\u0442\u044b", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0433\u043e\u0442\u043e\u0432\u044b\u0439 \u043f\u0440\u043e\u0434\u0443\u043a\u0442", "label": "\u0433\u043e\u0442\u043e\u0432\u044b\u0439 \u043f\u0440\u043e\u0434\u0443\u043a\u0442", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0441\u043d\u044d\u043a", "label": "\u0441\u043d\u044d\u043a", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0445\u043b\u0435\u0431\u043e\u0431\u0443\u043b\u043e\u0447\u043d\u043e\u0435 \u0438\u0437\u0434\u0435\u043b\u0438\u0435", "label": "\u0445\u043b\u0435\u0431\u043e\u0431\u0443\u043b\u043e\u0447\u043d\u043e\u0435 \u0438\u0437\u0434\u0435\u043b\u0438\u0435", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u043f\u0438\u0446\u0446\u0430, \u0437\u0430\u043f\u0435\u043a\u0430\u043d\u043a\u0438", "label": "\u043f\u0438\u0446\u0446\u0430, \u0437\u0430\u043f\u0435\u043a\u0430\u043d\u043a\u0438", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0438\u0442\u0430\u043b\u0438\u044f", "label": "\u0438\u0442\u0430\u043b\u0438\u044f", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0438\u0442\u0430\u043b\u044c\u044f\u043d\u0441\u043a\u0430\u044f \u043a\u0443\u0445\u043d\u044f", "label": "\u0438\u0442\u0430\u043b\u044c\u044f\u043d\u0441\u043a\u0430\u044f \u043a\u0443\u0445\u043d\u044f", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0442\u0438\u043f \u0431\u043b\u044e\u0434\u0430", "label": "\u0442\u0438\u043f \u0431\u043b\u044e\u0434\u0430", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "duodecim pizze", "label": "duodecim pizze", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "pizzaiolo", "label": "pizzaiolo", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "iv i", "label": "iv i", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "xix", "label": "xix", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "xx", "label": "xx", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "a libro", "label": "a libro", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "calzone", "label": "calzone", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "gbejna", "label": "gbejna", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "grandma", "label": "grandma", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "greece", "label": "greece", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "stuffed", "label": "stuffed", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "aurelios", "label": "aurelios", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "provel", "label": "provel", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "nic o boli nicola", "label": "nic o boli nicola", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "bexiga bela vista", "label": "bexiga bela vista", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "australiana", "label": "australiana", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "gourmet pizzas bocconcini", "label": "gourmet pizzas bocconcini", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "tandoori chicken paneer", "label": "tandoori chicken paneer", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "paris", "label": "paris", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "pizzicare", "label": "pizzicare", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "isbn", "label": "isbn", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "issn", "label": "issn", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "pomodoro", "label": "pomodoro", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "salsicce boscaiola", "label": "salsicce boscaiola", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "hut dominos smoking joes iq", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "di", "to": "grano tenero tipo", "value": 1, "width": 1}, {"arrows": "to", "from": "di", "to": "mare", "value": 1, "width": 1}, {"arrows": "to", "from": "chicago", "to": "style", "value": 4, "width": 1}, {"arrows": "to", "from": "sicilian", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "aglio", "to": "e", "value": 1, "width": 1}, {"arrows": "to", "from": "aglio", "to": "olio", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "alla marinara", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "napolitana napoli", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "con le cozze", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "alle vongole", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "regina", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "capricciosa", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "diabola", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "al tonno", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "hawaii", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "styles", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "home run inn", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "kitchen wolfgang pucks", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "providence rhode island", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "bagels", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "hut dominos smoking joes iq", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "margherita", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "aglio", "value": 2, "width": 1}, {"arrows": "to", "from": "pizza", "to": "ai", "value": 3, "width": 1}, {"arrows": "to", "from": "pizza", "to": "quattro", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "xvii", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "california", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "st", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "chicago", "value": 2, "width": 1}, {"arrows": "to", "from": "pizza", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "pizza", "to": "larousse", "value": 1, "width": 1}, {"arrows": "to", "from": "hawaiian", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "taco", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "margherita", "to": "bianca", "value": 1, "width": 1}, {"arrows": "to", "from": "and", "to": "ric riccardo", "value": 1, "width": 1}, {"arrows": "to", "from": "and", "to": "rosatis", "value": 1, "width": 1}, {"arrows": "to", "from": "pizzeria", "to": "uno", "value": 2, "width": 1}, {"arrows": "to", "from": "pizzeria", "to": "due", "value": 1, "width": 1}, {"arrows": "to", "from": "english muffin french bread", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "frutti", "to": "di", "value": 1, "width": 1}, {"arrows": "to", "from": "ike sewell", "to": "and", "value": 1, "width": 1}, {"arrows": "to", "from": "ric riccardo", "to": "pizzeria", "value": 1, "width": 1}, {"arrows": "to", "from": "quattro", "to": "formaggi", "value": 1, "width": 1}, {"arrows": "to", "from": "quattro", "to": "stagioni", "value": 1, "width": 1}, {"arrows": "to", "from": "larousse", "to": "gastronomique", "value": 1, "width": 1}, {"arrows": "to", "from": "uno", "to": "pizzeria", "value": 1, "width": 1}, {"arrows": "to", "from": "canadian", "to": "style", "value": 1, "width": 1}, {"arrows": "to", "from": "funghi", "to": "e", "value": 1, "width": 1}, {"arrows": "to", "from": "grilled", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "farina", "to": "di", "value": 1, "width": 1}, {"arrows": "to", "from": "detroit", "to": "style", "value": 1, "width": 1}, {"arrows": "to", "from": "home run inn", "to": "and", "value": 1, "width": 1}, {"arrows": "to", "from": "york", "to": "style", "value": 1, "width": 1}, {"arrows": "to", "from": "haven", "to": "style", "value": 1, "width": 1}, {"arrows": "to", "from": "louis", "to": "style", "value": 2, "width": 1}, {"arrows": "to", "from": "style", "to": "deep dish", "value": 2, "width": 1}, {"arrows": "to", "from": "style", "to": "thin crust", "value": 1, "width": 1}, {"arrows": "to", "from": "style", "to": "pizza", "value": 10, "width": 1}, {"arrows": "to", "from": "ai", "to": "funghi", "value": 1, "width": 1}, {"arrows": "to", "from": "ai", "to": "frutti", "value": 1, "width": 1}, {"arrows": "to", "from": "ai", "to": "quattro", "value": 1, "width": 1}, {"arrows": "to", "from": "chez panisse berkeley", "to": "california", "value": 1, "width": 1}, {"arrows": "to", "from": "new", "to": "york", "value": 1, "width": 1}, {"arrows": "to", "from": "new", "to": "haven", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u043a\u0443\u043b\u0438\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u043e\u043b\u0443\u0444\u0430\u0431\u0440\u0438\u043a\u0430\u0442\u044b", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0433\u043e\u0442\u043e\u0432\u044b\u0439 \u043f\u0440\u043e\u0434\u0443\u043a\u0442", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0441\u043d\u044d\u043a", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0445\u043b\u0435\u0431\u043e\u0431\u0443\u043b\u043e\u0447\u043d\u043e\u0435 \u0438\u0437\u0434\u0435\u043b\u0438\u0435", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u043f\u0438\u0446\u0446\u0430, \u0437\u0430\u043f\u0435\u043a\u0430\u043d\u043a\u0438", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0438\u0442\u0430\u043b\u0438\u044f", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0438\u0442\u0430\u043b\u044c\u044f\u043d\u0441\u043a\u0430\u044f \u043a\u0443\u0445\u043d\u044f", "value": 2, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "\u0442\u0438\u043f \u0431\u043b\u044e\u0434\u0430", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "duodecim pizze", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "pizzaiolo", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "iv i", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "xix", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "xx", "value": 2, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "farina", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "a libro", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "sicilian", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "calzone", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "detroit", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "louis", "value": 2, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "gbejna", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "grandma", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "greece", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "stuffed", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "ike sewell", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "aurelios", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "provel", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "chez panisse berkeley", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "hawaiian", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "canadian", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "taco", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "grilled", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "english muffin french bread", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "nic o boli nicola", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "bexiga bela vista", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "australiana", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "gourmet pizzas bocconcini", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "tandoori chicken paneer", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "paris", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "pizzicare", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "isbn", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "issn", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "pizza", "value": 21, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "xvii", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "margherita", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "new", "value": 2, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "chicago", "value": 2, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "pizzeria", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "st", "value": 1, "width": 1}, {"arrows": "to", "from": "\u043f\u0438\u0446\u0446\u0430", "to": "california", "value": 1, "width": 1}, {"arrows": "to", "from": "grandma", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "e", "to": "pomodoro", "value": 1, "width": 1}, {"arrows": "to", "from": "e", "to": "salsicce boscaiola", "value": 1, "width": 1}, {"arrows": "to", "from": "e", "to": "olio", "value": 1, "width": 1}, {"arrows": "to", "from": "rosatis", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "paris", "to": "larousse", "value": 1, "width": 1}, {"arrows": "to", "from": "nic o boli nicola", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "olio", "to": "e", "value": 1, "width": 1}, {"arrows": "to", "from": "aurelios", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "deep dish", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "greece", "to": "style", "value": 1, "width": 1}, {"arrows": "to", "from": "thin crust", "to": "pizza", "value": 1, "width": 1}, {"arrows": "to", "from": "california", "to": "style", "value": 2, "width": 1}, {"arrows": "to", "from": "california", "to": "california", "value": 1, "width": 1}, {"arrows": "to", "from": "california", "to": "pizza", "value": 1, "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

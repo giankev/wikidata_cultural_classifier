@@ -1,6 +1,7 @@
 from collections import Counter
 import math
 from difflib import SequenceMatcher
+from wiki_extractor import WikidataExtractor
 
 class DatasetParser:
 
