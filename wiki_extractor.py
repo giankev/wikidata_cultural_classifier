@@ -5,9 +5,10 @@ class WikidataExtractor:
     """
     Classe per estrarre informazioni da Wikidata a partire da un URL o un ID di entità.
     """
+    _client = Client()
+
     def __init__(self, identifier):
-        # Inizializza il client e carica l'item
-        self.client = Client()
+        # Caricamento dell'item
         self.entity_id = self.extract_entity_id(identifier)
         self.item = self._fetch_item(self.entity_id)
         self.url_api = "https://en.wikipedia.org/w/api.php"
@@ -48,7 +49,7 @@ class WikidataExtractor:
         Recupera l'item da Wikidata, caricando etichette, descrizioni e sitelinks.
         """
         try:
-            return self.client.get(entity_id, load=True)
+            return self._client.get(entity_id, load=True)
         except Exception as e:
             raise ValueError(f"Errore nel recupero dell'entità {entity_id}: {e}")
 
