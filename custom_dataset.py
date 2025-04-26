@@ -30,7 +30,7 @@ class CustomData:
         fetched_results = {}
         #Nota che per alcuni valori di MAXWORKERS possono creare errori del tipo "HTTP Error 429: Too Many Requests".
         #Questo dipende anche dal numero di item a cui si fa richiesta al server
-        MAXWORKERS = 5 # a volte se impostato a 10 non crea a problemi, penso che dipenda dal carico del server nel momento delle richeiste 
+        MAXWORKERS = 5 # a volte se impostato a 10 non crea a problemi, penso che dipenda dal carico del server nel momento delle richeiste
 
         # Esecuzione in parallelo di #max_workers threads
         with ThreadPoolExecutor(max_workers=MAXWORKERS) as executor:
@@ -58,18 +58,18 @@ class CustomData:
       print(f"  Failed Fetches (Extractor is None): {failures}")
 
     def add_feature(self) -> dict: #aggiunge le ulteriori feature calcolate dai metodi della classe DatasetParser
-      print("--- Parsing Dataset ---")
-      fetched_results = self.query_wikidata_for_items(self.df)
+      print("Adding feature...")
+      fetched_results = self.query_wikidata_for_items()
       self.check_fetch_results(fetched_results)
 
       df_copia = self.df.copy()
       df_copia['number_sitelinks'] = pd.NA
-      df_copia['sitelinks_translation_entropy'] = pd.NA 
+      df_copia['sitelinks_translation_entropy'] = pd.NA
 
       for idx, extractor_instance in fetched_results.items():
           if extractor_instance:
               try:
-            
+
                   parser = DatasetParser(extractor_instance)
                   num_links = parser.get_number_sitelinks()
                   entropy = parser.sitelinks_translation_entropy()
@@ -113,7 +113,7 @@ class CustomData:
 
         if columns_to_drop is None:
             columns_to_drop = ["item", "name", "description", "subcategory"]
-            
+
         df_cleaned = df_cleaned.drop(columns=columns_to_drop)
 
         type_mapping = {"concept": 0, "entity": 1}
