@@ -83,7 +83,7 @@ class CustomData:
                   print(f"ERROR: Parsing failed for index {idx} (Entity: {extractor_instance.get_entity_id()}): {e}")
       return df_copia
 
-    def preprocess_data(self, columns_to_drop: list = None, type_col: str = 'type', category_col: str = 'category') -> pd.DataFrame:
+    def preprocess_data(self, df,columns_to_drop: list = None, type_col: str = 'type', category_col: str = 'category') -> pd.DataFrame:
         """
         Applica preprocessing a un DataFrame:
         1. Elimina righe con NaN in QUALSIASI colonna.
@@ -101,9 +101,9 @@ class CustomData:
         Returns:
             pd.DataFrame: Il DataFrame preprocessato.
         """
-        print(f"\n--- Preprocessing DataFrame (Initial rows: {len(self.df)}) ---")
-        original_row_count = len(self.df)
-        df_cleaned = self.df.dropna()
+        print(f"\n--- Preprocessing DataFrame (Initial rows: {len(df)}) ---")
+        original_row_count = len(df)
+        df_cleaned = df.dropna()
         final_row_count = len(df_cleaned)
         rows_deleted = original_row_count - final_row_count
 
