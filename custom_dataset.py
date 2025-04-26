@@ -1,3 +1,5 @@
+from wiki_extractor import WikidataExtractor
+from dataset_parser import DatasetParser
 import pandas as pd
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
