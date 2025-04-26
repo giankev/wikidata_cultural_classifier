@@ -101,9 +101,9 @@ class CustomData:
         Returns:
             pd.DataFrame: Il DataFrame preprocessato.
         """
-        print(f"\n--- Preprocessing DataFrame (Initial rows: {len(df)}) ---")
+        print(f"\n--- Preprocessing DataFrame (Initial rows: {len(self.df)}) ---")
         original_row_count = len(self.df)
-        df_cleaned = df.dropna()
+        df_cleaned = self.df.dropna()
         final_row_count = len(df_cleaned)
         rows_deleted = original_row_count - final_row_count
 
