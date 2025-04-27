@@ -22,15 +22,17 @@ class WikidataExtractor:
             return url_or_id.strip().split("/")[-1]
         return url_or_id
 
-    def request_data(self, title: str = "enwiki"):
+    def request_data(self):
         """
         Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
         """
+
+        url = self.item.data['sitelinks']['enwiki']['title']
         params = {
           "action": "query",
           "prop": "extracts",
           "explaintext": True,
-          "titles": title,
+          "titles": url,
           "format": "json",
           "redirects": 1
         }
@@ -59,24 +61,11 @@ class WikidataExtractor:
         """
         return self.entity_id
 
-    def get_label(self, lang = "en") -> str:
+    def get_label(self) -> str:
         """
-        Restituisce l'etichetta dell'entità nella lingua specificata (default: 'en').
-        Se non esiste una label in quella lingua, tenta di restituire quella inglese
-        o, in ultima istanza, la prima label disponibile.
+        Restituisce l'etichetta dell'entità nella lingua specificata (default: en).
         """
-        labels = self.item.data.get("labels", {})
-        # Try the requested language
-        if lang in labels:
-            return labels[lang]["value"]
-        # Fallback to English if different
-        if lang != "en" and "en" in labels:
-            return labels["en"]["value"]
-        # Finally, try to return the first available label
-        if labels:
-            return next(iter(labels.values()))["value"]
-        # Else there is nothing to return
-        return None
+        return self.item.label
 
     def get_description(self) -> str:
         """
@@ -99,30 +88,6 @@ class WikidataExtractor:
                 result[site_key] = {'url': url, 'title': title}
 
         return result
-    
-    def get_wikipedia_url(self, lang='en'):
-        """
-        Restituisce il link alla pagina wikipedia dell'item
-        lang default = english, se l'argomento è NULL restituisce tutti i sitelinks
-        """
-        sitelinks = self.get_sitelinks()
-        if sitelinks:
-            if lang:
-                # filter only the specified language
-                sitelink = sitelinks.get(f'{lang}wiki')
-                if sitelink:
-                    wiki_url = sitelink.get('url')
-                    if wiki_url:
-                        return requests.utils.unquote(wiki_url)
-            else:
-                # return all of the urls
-                wiki_urls = {}
-                for key, sitelink in sitelinks.items():
-                    wiki_url = sitelink.get('url')
-                    if wiki_url:
-                        wiki_urls[key] = requests.utils.unquote(wiki_url)
-                return wiki_urls
-        return None   
 
     def get_claims(self) -> dict:
         """
@@ -136,22 +101,19 @@ class WikidataExtractor:
             values = cl_list
             claims[prop_id] = values
         return claims
-    
-    def get_label_for_qid(self, qid, lang="en"):
-        try:
-            entity = self._client.get(qid, load=True)
-            return entity.label.get(lang, qid)
-        except:
-            return qid  # fallback to QID
-
 
 
 if __name__ == '__main__':
     # Esempio di utilizzo
-    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    # PASTA ALLA GRICIA -> cultural exclusive
+    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    # PIZZA -> cultural representative
+    wikidata_url = "https://www.wikidata.org/wiki/Q177"
     entity = WikidataExtractor(wikidata_url)
+    text =  entity.request_data()
     print("Entity ID:", entity.get_entity_id())
     print("Label:", entity.get_label())
     print("Description:", entity.get_description())
     print("Sitelinks:", entity.get_sitelinks())
     print("Claims:", entity.get_claims())
+    print("\n", text)

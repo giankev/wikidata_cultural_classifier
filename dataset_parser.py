@@ -1,11 +1,13 @@
 from collections import Counter
 import math
 from difflib import SequenceMatcher
-from wiki_extractor import WikidataExtractor
 
 class DatasetParser:
 
   def __init__(self, item):
+    '''
+    Inizializzazione del costruttore tramite oggetto WikidataExtractor.
+    '''
 
     self.entity_id = item.get_entity_id()
     self.sitelinks = item.get_sitelinks()
@@ -135,10 +137,24 @@ class DatasetParser:
     """
     return len(self.sitelinks)
 
+  def get_label(self) -> str:
+    """
+    Restituisce l'etichetta dell'entità
+    """
+    return self.label
+
+  def get_description(self) -> str:
+    """
+    Restituisce la descrizione dell'entità
+    """
+    return self.description
 
 if __name__ == '__main__':
     # Esempio di utilizzo
-    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    # PASTA ALLA GRICIA -> cultural exclusive
+    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    # PIZZA -> cultural representative
+    wikidata_url = "https://www.wikidata.org/wiki/Q177"
     item = WikidataExtractor(wikidata_url)
     properties_to_check = {
         "P495": "Country of Origin",
@@ -160,7 +176,10 @@ if __name__ == '__main__':
     number_sitelinks = dataset_parser.get_number_sitelinks()
     sitelinks_translation_entropy = dataset_parser.sitelinks_translation_entropy()
 
-    print(target_claims)
-    print(claims_value)
-    print(number_sitelinks)
-    print(sitelinks_translation_entropy)
+    print("Entity ID:", dataset_parser.entity_id)
+    print("Label:", dataset_parser.get_label())
+    print("Description:", dataset_parser.get_description())
+    print("Target claims:", target_claims)
+    print("Target claims value:", claims_value)
+    print("Number sitelinks:", number_sitelinks) #numero di pagine wikipedia nelle varie lingue che sono presenti
+    print("Entropy of sitelinks:", sitelinks_translation_entropy)
