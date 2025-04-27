@@ -27,26 +27,29 @@ class CustomData:
             return idx, None
 
     def query_wikidata_for_items(self) -> dict:
+      '''
+      Restituisce un dic [index, wikidataextractor_obj]
+      '''
         # Prepara gli argomenti per i threads
-        args = list(self.df['item'].items())  # lista di (index, wikidata_url)
-        fetched_results = {}
-        #Nota che per alcuni valori di MAXWORKERS possono creare errori del tipo "HTTP Error 429: Too Many Requests".
-        #Questo dipende anche dal numero di item a cui si fa richiesta al server
-        MAXWORKERS = 5 # a volte se impostato a 10 non crea a problemi, penso che dipenda dal carico del server nel momento delle richeiste
+      args = list(self.df['item'].items())  # lista di (index, wikidata_url)
+      fetched_results = {}
+      #Nota che per alcuni valori di MAXWORKERS possono creare errori del tipo "HTTP Error 429: Too Many Requests".
+      #Questo dipende anche dal numero di item a cui si fa richiesta al server
+      MAXWORKERS = 5 # a volte se impostato a 10 non crea a problemi, penso che dipenda dal carico del server nel momento delle richeiste.
 
-        # Esecuzione in parallelo di #max_workers threads
-        with ThreadPoolExecutor(max_workers=MAXWORKERS) as executor:
-            futures = {executor.submit(self.create_extractor_task, arg): arg[0] for arg in args}
-            for future in as_completed(futures):
-                idx = futures[future]
-                try:
-                    _, result_obj = future.result()
-                    fetched_results[idx] = result_obj
-                except Exception as e:
-                    print(f"ERROR: Critical error getting result for index {idx}: {e}")
-                    fetched_results[idx] = None
+      # Esecuzione in parallelo di #max_workers threads
+      with ThreadPoolExecutor(max_workers=MAXWORKERS) as executor:
+          futures = {executor.submit(self.create_extractor_task, arg): arg[0] for arg in args}
+          for future in as_completed(futures):
+              idx = futures[future]
+              try:
+                  _, result_obj = future.result()
+                  fetched_results[idx] = result_obj
+              except Exception as e:
+                  print(f"ERROR: Critical error getting result for index {idx}: {e}")
+                  fetched_results[idx] = None
 
-        return fetched_results
+      return fetched_results
 
     def check_fetch_results(self, fetched_results: dict) -> None:
       total_attempted = len(fetched_results) # Numero di item per cui abbiamo provato il fetch
@@ -76,11 +79,15 @@ class CustomData:
                   num_links = parser.get_number_sitelinks()
                   entropy = parser.sitelinks_translation_entropy()
 
+                  # aggiunta delle feature calcolate da 'DasetParser'
                   df_copia.at[idx, 'number_sitelinks'] = num_links
                   df_copia.at[idx, 'sitelinks_translation_entropy'] = entropy
 
               except Exception as e:
                   print(f"ERROR: Parsing failed for index {idx} (Entity: {extractor_instance.get_entity_id()}): {e}")
+
+              
+      print("Feature added...")
       return df_copia
 
     def preprocess_data(self, df,columns_to_drop: list = None, type_col: str = 'type', category_col: str = 'category') -> pd.DataFrame:
