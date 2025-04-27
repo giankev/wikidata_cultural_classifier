@@ -11,3 +11,4 @@ colorama        # colored terminal text
 pyvis           # for graph visualization on a browser
 stopwordsiso    # multi language stopwords
 pycountry       # convert language to label
+seaborn

@@ -1,0 +1,88 @@
+Training results obtained from the g2v_NN code.
+USE_GRAPH tells the model to use the graph extracted features
+USE_EMBED does the same but with embedded graphs
+USE_SITELINK tells the model to use the features 'number_sitelinks' and 'sitelinks_translation_entropy'
+
+USE_GRAPH    = False
+USE_EMBED    = False
+USE_SITELINK = True
+
+Final Evaluation on validation set:
+Accuracy:  0.6522
+Precision: 0.6524
+Recall:    0.6462
+F1-score:  0.6444
+Confusion Matrix:
+[[92 10 14]
+ [12 48 16]
+ [37 15 55]]
+
+
+
+USE_GRAPH    = True
+USE_EMBED    = False
+USE_SITELINK = False
+
+Final Evaluation on validation set:
+Accuracy:  0.5819
+Precision: 0.5816
+Recall:    0.5819
+F1-score:  0.5779
+Confusion Matrix:
+[[77 15 24]
+ [21 46  9]
+ [34 22 51]]
+
+
+
+USE_GRAPH    = False
+USE_EMBED    = True
+USE_SITELINK = False
+
+Final Evaluation on validation set:
+Accuracy:  0.5351
+Precision: 0.5367
+Recall:    0.5439
+F1-score:  0.5397
+Confusion Matrix:
+[[59 19 38]
+ [16 47 13]
+ [35 18 54]]
+
+
+
+USE_GRAPH    = True
+USE_EMBED    = True
+USE_SITELINK = False
+
+Final Evaluation on validation set:
+Accuracy:  0.5853
+Precision: 0.5863
+Recall:    0.5858
+F1-score:  0.5811
+Confusion Matrix:
+[[79 14 23]
+ [20 47  9]
+ [37 21 49]]
+
+
+
+USE_GRAPH    = True
+USE_EMBED    = False
+USE_SITELINK = True
+
+Final Evaluation on validation set:
+Accuracy:  0.5786
+Precision: 0.5790
+Recall:    0.5818
+F1-score:  0.5765
+Confusion Matrix:
+[[75 16 25]
+ [19 48  9]
+ [36 21 50]]
+
+
+
+USE_GRAPH    = True
+USE_EMBED    = True
+USE_SITELINK = True

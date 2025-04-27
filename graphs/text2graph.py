@@ -1,3 +1,6 @@
+# using stopwords and tokens build a graphs
+# input: wikipedia page description - titles and sections
+
 import os
 import re
 import math
