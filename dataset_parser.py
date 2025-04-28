@@ -149,12 +149,31 @@ class DatasetParser:
     """
     return self.description
 
+  def get_number_claims(self) -> int:
+    """
+    Restituisce il numero di claim dell'entità.
+    """
+    return len(self.claims)
+  
+  def get_presence_of_P495(self) -> bool:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return "P495" in self.claims.keys()
+
+  def get_presence_of_P1343(self) -> bool:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return "P1343" in self.claims.keys()
+
+
 if __name__ == '__main__':
     # Esempio di utilizzo
     # PASTA ALLA GRICIA -> cultural exclusive
-    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
     # PIZZA -> cultural representative
-    wikidata_url = "https://www.wikidata.org/wiki/Q177"
+    # wikidata_url = "https://www.wikidata.org/wiki/Q177"
     item = WikidataExtractor(wikidata_url)
     properties_to_check = {
         "P495": "Country of Origin",
@@ -167,7 +186,9 @@ if __name__ == '__main__':
         "P1435": "Heritage designation",
         "P27": "Country of citizenship",
         "P1705": "Native Label",
-        "P2012": "Cuisine"
+        "P2012": "Cuisine",
+        "P2596": "Culture",
+        "P1343": "Described by source"
     }
 
     dataset_parser = DatasetParser(item)
@@ -175,6 +196,9 @@ if __name__ == '__main__':
     claims_value = dataset_parser.get_claims_value(target_claims)
     number_sitelinks = dataset_parser.get_number_sitelinks()
     sitelinks_translation_entropy = dataset_parser.sitelinks_translation_entropy()
+    number_claims = dataset_parser.get_number_claims()
+    presence_of_P495 = dataset_parser.get_presence_of_P495()
+    presence_of_P1343 = dataset_parser.get_presence_of_P1343()
 
     print("Entity ID:", dataset_parser.entity_id)
     print("Label:", dataset_parser.get_label())
@@ -183,3 +207,6 @@ if __name__ == '__main__':
     print("Target claims value:", claims_value)
     print("Number sitelinks:", number_sitelinks) #numero di pagine wikipedia nelle varie lingue che sono presenti
     print("Entropy of sitelinks:", sitelinks_translation_entropy)
+    print("Numero di claims totali:", number_claims)
+    print("Presence of P495:", presence_of_P495)
+    print("Presence of P1343:", presence_of_P1343)

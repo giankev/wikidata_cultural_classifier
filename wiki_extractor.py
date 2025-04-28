@@ -102,6 +102,12 @@ class WikidataExtractor:
             claims[prop_id] = values
         return claims
 
+    def get_number_claims(self) -> int:
+        """
+        Restituisce il numero di claim dell'entità.
+        """
+        return len(self.get_claims())
+
 
 if __name__ == '__main__':
     # Esempio di utilizzo
@@ -116,4 +122,5 @@ if __name__ == '__main__':
     print("Description:", entity.get_description())
     print("Sitelinks:", entity.get_sitelinks())
     print("Claims:", entity.get_claims())
-    print("\n", text)
+    print("Numero di claims totali:", entity.get_number_claims())
+    #print("\n", text)
