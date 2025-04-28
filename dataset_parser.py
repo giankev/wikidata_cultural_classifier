@@ -159,13 +159,13 @@ class DatasetParser:
     """
     Restituisce True se l'entità ha il claim specificato, False altrimenti.
     """
-    return "P495" in self.claims.keys()
+    return 1 if ("P495" in self.claims.keys()) else 0
 
   def get_presence_of_P1343(self) -> bool:
     """
     Restituisce True se l'entità ha il claim specificato, False altrimenti.
     """
-    return "P1343" in self.claims.keys()
+    return 1 if ("P1343" in self.claims.keys()) else 0
 
 
 if __name__ == '__main__':
