@@ -44,8 +44,8 @@ class WikidataExtractor:
               text = page.get("extract", "")
               return text
         except Exception as e:
-              print(e)
-              return None
+              print(f"Errore nella chiamata all'API: {e}")
+              return ''
 
     def _fetch_item(self, entity_id: str):
         """
