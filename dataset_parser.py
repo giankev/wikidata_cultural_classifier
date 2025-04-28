@@ -14,6 +14,7 @@ class DatasetParser:
     self.claims = item.get_claims()
     self.label = item.get_label()
     self.description = item.get_description()
+    self.text = item.get_text()
 
   def claims_target(self, properties_to_check: dict = {}) -> dict:
     """
@@ -167,13 +168,46 @@ class DatasetParser:
     """
     return 1 if ("P1343" in self.claims.keys()) else 0
 
+  def get_presence_of_P2596(self) -> bool:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return 1 if ("P2596" in self.claims.keys()) else 0
+
+  def get_presence_of_P17(self) -> bool:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return 1 if ("P1343" in self.claims.keys()) else 0
+
+  def get_number_of_P31(self) -> int:
+    """
+    Restituisce il numero di claim specificato.
+    """
+    return len(self.claims["P31"])
+
+  def get_text(self):
+    """
+    Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
+    """
+    return self.text
+  
+  def get_len_text(self):
+    """
+    Ritorna la lunghezza del testo.
+    """
+    return len(self.text)
+  
+
+  
+
 
 if __name__ == '__main__':
     # Esempio di utilizzo
     # PASTA ALLA GRICIA -> cultural exclusive
-    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    #wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
     # PIZZA -> cultural representative
-    # wikidata_url = "https://www.wikidata.org/wiki/Q177"
+    wikidata_url = "https://www.wikidata.org/wiki/Q177"
     item = WikidataExtractor(wikidata_url)
     properties_to_check = {
         "P495": "Country of Origin",
@@ -199,6 +233,11 @@ if __name__ == '__main__':
     number_claims = dataset_parser.get_number_claims()
     presence_of_P495 = dataset_parser.get_presence_of_P495()
     presence_of_P1343 = dataset_parser.get_presence_of_P1343()
+    presence_of_P2596 = dataset_parser.get_presence_of_P2596()
+    presence_of_P17 = dataset_parser.get_presence_of_P17()
+    number_of_P31 = dataset_parser.get_number_of_P31()
+    text = dataset_parser.get_text()
+    len_text = dataset_parser.get_len_text()
 
     print("Entity ID:", dataset_parser.entity_id)
     print("Label:", dataset_parser.get_label())
@@ -210,3 +249,8 @@ if __name__ == '__main__':
     print("Numero di claims totali:", number_claims)
     print("Presence of P495:", presence_of_P495)
     print("Presence of P1343:", presence_of_P1343)
+    print("Presence of P2596:", presence_of_P2596)
+    print("Presence of P17:", presence_of_P17)
+    print("Number of P31:", number_of_P31)
+    print("Length of text:", len_text)
+    print("\n", text)

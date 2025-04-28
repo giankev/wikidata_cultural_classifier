@@ -12,6 +12,7 @@ class WikidataExtractor:
         self.entity_id = self.extract_entity_id(identifier)
         self.item = self._fetch_item(self.entity_id)
         self.url_api = "https://en.wikipedia.org/w/api.php"
+        self.text = self.request_data()
 
     @staticmethod
     def extract_entity_id(url_or_id: str) -> str:
@@ -108,6 +109,12 @@ class WikidataExtractor:
         """
         return len(self.get_claims())
 
+    def get_text(self):
+        """
+        Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
+        """
+        return self.text
+
 
 if __name__ == '__main__':
     # Esempio di utilizzo
@@ -116,11 +123,11 @@ if __name__ == '__main__':
     # PIZZA -> cultural representative
     wikidata_url = "https://www.wikidata.org/wiki/Q177"
     entity = WikidataExtractor(wikidata_url)
-    text =  entity.request_data()
+    text =  entity.get_text()
     print("Entity ID:", entity.get_entity_id())
     print("Label:", entity.get_label())
     print("Description:", entity.get_description())
     print("Sitelinks:", entity.get_sitelinks())
     print("Claims:", entity.get_claims())
     print("Numero di claims totali:", entity.get_number_claims())
-    #print("\n", text)
+    print("\n", text)
