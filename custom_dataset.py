@@ -82,8 +82,8 @@ class CustomData:
                   num_links = parser.get_number_sitelinks()
                   entropy = parser.sitelinks_translation_entropy()
                   num_claims = parser.get_number_claims()
-                  po_P495 = parser.get_po_P495()
-                  po_P1343 = parser.get_po_P31()
+                  po_P495 = parser.get_presence_of_P495()
+                  po_P1343 = parser.get_presence_of_P31()
 
                   # aggiunta delle feature calcolate da 'DasetParser'
                   df_copia.at[idx, 'number_sitelinks'] = num_links
