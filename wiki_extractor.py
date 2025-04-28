@@ -43,6 +43,7 @@ class WikidataExtractor:
 
         try:
               res = requests.get(self.url_api, params=params).json()
+              res.raise_for_status() # Solleva eccezione per errori HTTP (4xx, 5xx)
               page = next(iter(res["query"]["pages"].values()))
               text = page.get("extract", "")
               return text
