@@ -70,6 +70,9 @@ class CustomData:
       df_copia = self.df.copy()
       df_copia['number_sitelinks'] = pd.NA
       df_copia['sitelinks_translation_entropy'] = pd.NA
+      df_copia['number_claims'] = pd.NA
+      df_copia['po_P495'] = pd.NA
+      df_copia['po_P1343'] = pd.NA
 
       for idx, extractor_instance in fetched_results.items():
           if extractor_instance:
