@@ -178,7 +178,7 @@ class DatasetParser:
     """
     Restituisce True se l'entità ha il claim specificato, False altrimenti.
     """
-    return 1 if ("P1343" in self.claims.keys()) else 0
+    return 1 if ("P17" in self.claims.keys()) else 0
 
   def get_number_of_P31(self) -> int:
     """
