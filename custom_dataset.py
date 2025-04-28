@@ -78,10 +78,17 @@ class CustomData:
                   parser = DatasetParser(extractor_instance)
                   num_links = parser.get_number_sitelinks()
                   entropy = parser.sitelinks_translation_entropy()
+                  num_claims = parser.get_number_claims()
+                  po_P495 = parser.get_po_P495()
+                  po_P1343 = parser.get_po_P31()
 
                   # aggiunta delle feature calcolate da 'DasetParser'
                   df_copia.at[idx, 'number_sitelinks'] = num_links
                   df_copia.at[idx, 'sitelinks_translation_entropy'] = entropy
+                  df_copia.at[idx, 'number_claims'] = num_claims
+                  df_copia.at[idx, 'po_P495'] = po_P495
+                  df_copia.at[idx, 'po_P1343'] = po_P1343
+
 
               except Exception as e:
                   print(f"ERROR: Parsing failed for index {idx} (Entity: {extractor_instance.get_entity_id()}): {e}")
