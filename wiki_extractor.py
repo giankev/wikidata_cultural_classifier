@@ -29,6 +29,9 @@ class WikidataExtractor:
         """
 
         url = self.item.data['sitelinks']['enwiki']['title']
+        if not url or 'title' not in self.item.data['sitelinks']['enwiki']:
+          return '' 
+
         params = {
           "action": "query",
           "prop": "extracts",
