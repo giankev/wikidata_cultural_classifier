@@ -73,6 +73,7 @@ class CustomData:
       df_copia['number_claims'] = pd.NA
       df_copia['po_P495'] = pd.NA
       df_copia['po_P1343'] = pd.NA
+      df_copia['len_text'] = pd.NA
 
       for idx, extractor_instance in fetched_results.items():
           if extractor_instance:
@@ -84,6 +85,8 @@ class CustomData:
                   num_claims = parser.get_number_claims()
                   po_P495 = parser.get_presence_of_P495()
                   po_P1343 = parser.get_presence_of_P1343()
+                  len_text = parser.get_len_text()
+                  number_of_P31 = parser.get_number_of_P31()
 
                   # aggiunta delle feature calcolate da 'DasetParser'
                   df_copia.at[idx, 'number_sitelinks'] = num_links
@@ -91,7 +94,7 @@ class CustomData:
                   df_copia.at[idx, 'number_claims'] = num_claims
                   df_copia.at[idx, 'po_P495'] = po_P495
                   df_copia.at[idx, 'po_P1343'] = po_P1343
-
+                  df_copia.at[idx, 'len_text'] = len_text
 
               except Exception as e:
                   print(f"ERROR: Parsing failed for index {idx} (Entity: {extractor_instance.get_entity_id()}): {e}")
