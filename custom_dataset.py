@@ -73,7 +73,10 @@ class CustomData:
       df_copia['number_claims'] = pd.NA
       df_copia['po_P495'] = pd.NA
       df_copia['po_P1343'] = pd.NA
-      df_copia['len_text'] = pd.NA
+      df_copia['po_P2596'] = pd.NA
+      df_copia['po_P17'] = pd.NA
+      df_copia['number_of_P31'] = pd.NA
+      df_copia['sum_cultural_claims'] = pd.NA
 
       for idx, extractor_instance in fetched_results.items():
           if extractor_instance:
@@ -85,21 +88,27 @@ class CustomData:
                   num_claims = parser.get_number_claims()
                   po_P495 = parser.get_presence_of_P495()
                   po_P1343 = parser.get_presence_of_P1343()
-                  len_text = parser.get_len_text()
+                  po_P2596 = parser.get_presence_of_P2596()
+                  po_P17 = parser.get_presence_of_P17()
                   number_of_P31 = parser.get_number_of_P31()
-
+                  sum_cultural_claims = parser.get_sum_of_cultural_claims()
+            
                   # aggiunta delle feature calcolate da 'DasetParser'
                   df_copia.at[idx, 'number_sitelinks'] = num_links
                   df_copia.at[idx, 'sitelinks_translation_entropy'] = entropy
                   df_copia.at[idx, 'number_claims'] = num_claims
                   df_copia.at[idx, 'po_P495'] = po_P495
                   df_copia.at[idx, 'po_P1343'] = po_P1343
-                  df_copia.at[idx, 'len_text'] = len_text
+                  df_copia.at[idx, 'po_P2596'] = po_P2596
+                  df_copia.at[idx, 'po_P17'] = po_P17
+                  df_copia.at[idx, 'number_of_P31'] = number_of_P31
+                  df_copia.at[idx, 'sum_cultural_claims'] = sum_cultural_claims
+                  
 
               except Exception as e:
                   print(f"ERROR: Parsing failed for index {idx} (Entity: {extractor_instance.get_entity_id()}): {e}")
 
-              
+
       print("Feature added...")
       return df_copia
 
