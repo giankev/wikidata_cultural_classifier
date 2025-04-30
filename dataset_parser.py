@@ -8,13 +8,11 @@ class DatasetParser:
     '''
     Inizializzazione del costruttore tramite oggetto WikidataExtractor.
     '''
-
     self.entity_id = item.get_entity_id()
     self.sitelinks = item.get_sitelinks()
     self.claims = item.get_claims()
     self.label = item.get_label()
     self.description = item.get_description()
-    self.text = item.get_text()
 
   def claims_target(self, properties_to_check: dict = {}) -> dict:
     """
@@ -155,7 +153,7 @@ class DatasetParser:
     Restituisce il numero di claim dell'entità.
     """
     return len(self.claims)
-  
+
   def get_presence_of_P495(self) -> bool:
     """
     Restituisce True se l'entità ha il claim specificato, False altrimenti.
@@ -184,28 +182,22 @@ class DatasetParser:
     """
     Restituisce il numero di claim specificato.
     """
-    return len(self.claims["P31"])
 
-  def get_text(self):
-    """
-    Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
-    """
-    return self.text
-  
-  def get_len_text(self):
-    """
-    Ritorna la lunghezza del testo.
-    """
-    return len(self.text)
-  
+    p31_statements = self.claims.get("P31", [])
+    return len(p31_statements)
 
-  
+  def get_sum_of_cultural_claims(self) -> int:
+    """
+    Restituisce la somma dei claims culturali.
+    """
+    return sum(1 for claim in self.claims.keys() if claim in ["P495", "P17", "P2596", "P1435"])
+
 
 
 if __name__ == '__main__':
     # Esempio di utilizzo
     # PASTA ALLA GRICIA -> cultural exclusive
-    #wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
     # PIZZA -> cultural representative
     wikidata_url = "https://www.wikidata.org/wiki/Q177"
     item = WikidataExtractor(wikidata_url)
@@ -236,8 +228,7 @@ if __name__ == '__main__':
     presence_of_P2596 = dataset_parser.get_presence_of_P2596()
     presence_of_P17 = dataset_parser.get_presence_of_P17()
     number_of_P31 = dataset_parser.get_number_of_P31()
-    text = dataset_parser.get_text()
-    len_text = dataset_parser.get_len_text()
+    sum_cultural_claims = dataset_parser.get_sum_of_cultural_claims()
 
     print("Entity ID:", dataset_parser.entity_id)
     print("Label:", dataset_parser.get_label())
@@ -252,5 +243,4 @@ if __name__ == '__main__':
     print("Presence of P2596:", presence_of_P2596)
     print("Presence of P17:", presence_of_P17)
     print("Number of P31:", number_of_P31)
-    print("Length of text:", len_text)
-    print("\n", text)
+    print("sum of cultural claims:", sum_cultural_claims)

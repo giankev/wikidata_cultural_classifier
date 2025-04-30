@@ -12,7 +12,6 @@ class WikidataExtractor:
         self.entity_id = self.extract_entity_id(identifier)
         self.item = self._fetch_item(self.entity_id)
         self.url_api = "https://en.wikipedia.org/w/api.php"
-        self.text = self.request_data()
 
     @staticmethod
     def extract_entity_id(url_or_id: str) -> str:
@@ -24,32 +23,77 @@ class WikidataExtractor:
         return url_or_id
 
     def request_data(self):
-        """
-        Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
-        """
+      """
+      Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
+      """
 
-        url = self.item.data['sitelinks']['enwiki']['title']
-        if not url or 'title' not in self.item.data['sitelinks']['enwiki']:
-          return '' 
+      default_return = '' # O None, se preferisci
 
-        params = {
-          "action": "query",
-          "prop": "extracts",
-          "explaintext": True,
-          "titles": url,
-          "format": "json",
-          "redirects": 1
-        }
+      # Verifica preliminare sull'item Wikidata e sitelink enwiki
+      if self.item is None or not hasattr(self.item, 'data'):
+          # print(f"DEBUG [{self.entity_id}]: Impossibile richiedere testo Wiki, item Wikidata non valido.")
+          return default_return
+      sitelinks = self.item.data.get('sitelinks', {})
+      enwiki_data = sitelinks.get('enwiki')
+      if not enwiki_data or 'title' not in enwiki_data:
+          # print(f"DEBUG [{self.entity_id}]: Sitelink 'enwiki' non trovato.")
+          return default_return
 
-        try:
-              res = requests.get(self.url_api, params=params).json()
-              res.raise_for_status() # Solleva eccezione per errori HTTP (4xx, 5xx)
-              page = next(iter(res["query"]["pages"].values()))
-              text = page.get("extract", "")
-              return text
-        except Exception as e:
-              print(f"Errore nella chiamata all'API: {e}")
-              return ''
+      wiki_title = enwiki_data['title']
+      params = {
+        "action": "query",
+        "prop": "extracts",
+        "explaintext": True,
+        "titles": wiki_title,
+        "format": "json",
+        "redirects": 1
+      }
+
+      try:
+          # 1. Fai la richiesta GET e ottieni l'OGGETTO Response
+          response = requests.get(self.url_api, params=params, timeout=10)
+
+          # 2. CONTROLLA lo status code PRIMA di fare .json()
+          response.raise_for_status() # Solleva HTTPError per 4xx/5xx
+
+          # 3. SOLO SE lo status è OK (2xx), procedi con il parsing JSON
+          res_json = response.json()
+
+          # 4. Estrai dati dal JSON (con controlli)
+          pages = res_json.get("query", {}).get("pages", {})
+          if not pages:
+                print(f"WARN [{self.entity_id}]: Risposta JSON da Wikipedia API non contiene 'pages' per '{wiki_title}'.")
+                return default_return
+
+          page = next(iter(pages.values()))
+          if page.get('missing') is not None or page.get('invalid') is not None:
+                # print(f"DEBUG [{self.entity_id}]: Pagina Wikipedia '{wiki_title}' mancante/invalida.")
+                return default_return
+
+          text = page.get("extract", default_return) # Usa default se 'extract' manca
+          return text
+
+      except requests.exceptions.HTTPError as http_err:
+          # Errore specifico HTTP catturato da raise_for_status()
+          print(f"ERROR [{self.entity_id}]: Errore HTTP Wikipedia per '{wiki_title}': {http_err.response.status_code} {http_err}")
+          return default_return
+      except requests.exceptions.RequestException as req_err:
+          # Altri errori di rete (timeout, connessione, ecc.)
+          print(f"ERROR [{self.entity_id}]: Errore di rete Wikipedia per '{wiki_title}': {req_err}")
+          return default_return
+      except json.JSONDecodeError as json_err:
+          # Errore specifico se la risposta (anche con status 200) non è JSON valido
+          print(f"ERROR [{self.entity_id}]: Errore decodifica JSON Wikipedia per '{wiki_title}': {json_err}")
+          # Stampa l'inizio del testo ricevuto per debug
+          try:
+                print(f"       Response Status: {response.status_code}, Text: {response.text[:200]}...")
+          except NameError: # response potrebbe non essere definito se l'errore è prima
+                pass
+          return default_return
+      except Exception as e:
+          # Cattura altri errori imprevisti durante l'estrazione dal JSON
+          print(f"ERROR [{self.entity_id}]: Errore generico processando Wikipedia per '{wiki_title}': {e}")
+          return default_return
 
     def _fetch_item(self, entity_id: str):
         """
@@ -113,25 +157,18 @@ class WikidataExtractor:
         """
         return len(self.get_claims())
 
-    def get_text(self):
-        """
-        Richiesta dati da Wikipedia tramite API, ritorna il contenuto della pagina.
-        """
-        return self.text
 
 
 if __name__ == '__main__':
     # Esempio di utilizzo
     # PASTA ALLA GRICIA -> cultural exclusive
-    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
     # PIZZA -> cultural representative
-    wikidata_url = "https://www.wikidata.org/wiki/Q177"
+    #wikidata_url = "https://www.wikidata.org/wiki/Q177"
     entity = WikidataExtractor(wikidata_url)
-    text =  entity.get_text()
     print("Entity ID:", entity.get_entity_id())
     print("Label:", entity.get_label())
     print("Description:", entity.get_description())
     print("Sitelinks:", entity.get_sitelinks())
     print("Claims:", entity.get_claims())
     print("Numero di claims totali:", entity.get_number_claims())
-    print("\n", text)
