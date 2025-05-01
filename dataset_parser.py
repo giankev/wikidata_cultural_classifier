@@ -178,6 +178,24 @@ class DatasetParser:
     """
     return 1 if ("P17" in self.claims.keys()) else 0
 
+  def get_presence_of_P172(self) -> int:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return 1 if ("P172" in self.claims.keys()) else 0
+
+  def get_presence_of_P1268(self) -> int:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return 1 if ("P1268" in self.claims.keys()) else 0
+
+  def get_presence_of_P136(self) -> int:
+    """
+    Restituisce True se l'entità ha il claim specificato, False altrimenti.
+    """
+    return 1 if ("P136" in self.claims.keys()) else 0
+
   def get_number_of_P31(self) -> int:
     """
     Restituisce il numero di claim specificato.
@@ -190,16 +208,15 @@ class DatasetParser:
     """
     Restituisce la somma dei claims culturali.
     """
-    return sum(1 for claim in self.claims.keys() if claim in ["P495", "P17", "P2596", "P1435"])
-
+    return sum(1 for claim in self.claims.keys() if claim in ["P495", "P17", "P2596", "P1435", "P172", "P1705", "P27"])
 
 
 if __name__ == '__main__':
     # Esempio di utilizzo
     # PASTA ALLA GRICIA -> cultural exclusive
-    # wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
+    wikidata_url = "https://www.wikidata.org/wiki/Q55641393"
     # PIZZA -> cultural representative
-    wikidata_url = "https://www.wikidata.org/wiki/Q177"
+    # wikidata_url = "https://www.wikidata.org/wiki/Q177"
     item = WikidataExtractor(wikidata_url)
     properties_to_check = {
         "P495": "Country of Origin",
@@ -214,7 +231,10 @@ if __name__ == '__main__':
         "P1705": "Native Label",
         "P2012": "Cuisine",
         "P2596": "Culture",
-        "P1343": "Described by source"
+        "P1343": "Described by source",
+        "P172": "ethnic group",
+        "P1268": "represents",
+        "P136": "genre"
     }
 
     dataset_parser = DatasetParser(item)
@@ -227,6 +247,9 @@ if __name__ == '__main__':
     presence_of_P1343 = dataset_parser.get_presence_of_P1343()
     presence_of_P2596 = dataset_parser.get_presence_of_P2596()
     presence_of_P17 = dataset_parser.get_presence_of_P17()
+    presence_of_P172 = dataset_parser.get_presence_of_P172()
+    presence_of_P1268 = dataset_parser.get_presence_of_P1268()
+    presence_of_P136 = dataset_parser.get_presence_of_P136()
     number_of_P31 = dataset_parser.get_number_of_P31()
     sum_cultural_claims = dataset_parser.get_sum_of_cultural_claims()
 
@@ -242,5 +265,8 @@ if __name__ == '__main__':
     print("Presence of P1343:", presence_of_P1343)
     print("Presence of P2596:", presence_of_P2596)
     print("Presence of P17:", presence_of_P17)
+    print("Presence of P172:", presence_of_P172)
+    print("Presence of P1268:", presence_of_P1268)
+    print("Presence of P136:", presence_of_P136)
     print("Number of P31:", number_of_P31)
     print("sum of cultural claims:", sum_cultural_claims)
