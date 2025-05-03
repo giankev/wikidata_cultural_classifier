@@ -50,5 +50,4 @@ To change the language change the following line, also inside text2graph main fu
 
 ### Issues
 
-- Graphs can be improved with weighted nodes
-- text2graph considers only the selected language stopwords (easily fixed with **stopwords.stopwords(["en", "it", "others"])**, might impact performance)
+- Graphs take too long to be preprocessed
