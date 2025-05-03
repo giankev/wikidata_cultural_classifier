@@ -17,8 +17,8 @@ import time
 
 # ---------- CONFIG ----------
 
-INPUT_CSV = os.path.expanduser('~/content/valid.csv')
-OUTPUT_CSV = os.path.expanduser('~/content/valid_augmented.csv')
+INPUT_CSV = os.path.expanduser('~/content/train.csv')
+OUTPUT_CSV = os.path.expanduser('~/content/train_augmented.csv')
 
 WD_CACHE_FILE = os.path.expanduser('~/content/wd_cache.pkl')
 HTML_CACHE_FILE = os.path.expanduser('~/content/html_cache.pkl')
@@ -177,13 +177,12 @@ def save_caches():
         pickle.dump(html_cache, f)
 
 
-# ---------- main ----------
-if __name__ == '__main__':
-    df = pd.read_csv(INPUT_CSV).drop(columns=['description'], errors='ignore')
+def preprocess(input_csv = INPUT_CSV, output_csv = OUTPUT_CSV, num_workers = MAX_WORKERS):
+    df = pd.read_csv(input_csv).drop(columns=['description'], errors='ignore')
     total = len(df)
     results = {}
 
-    with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    with ProcessPoolExecutor(max_workers=num_workers) as executor:
         futures = {
             executor.submit(_process_row, idx, row['item']): idx
             for idx, row in df.iterrows()
@@ -202,8 +201,12 @@ if __name__ == '__main__':
 
     stats_df = pd.DataFrame.from_dict(results, orient='index')
     out = pd.concat([df, stats_df], axis=1)
-    out.to_csv(OUTPUT_CSV, index=False)
-    print(f"\n[INFO] Saved augmented CSV to {OUTPUT_CSV}")
+    out.to_csv(output_csv, index=False)
+    print(f"\n[INFO] Saved augmented CSV to {output_csv}")
 
     if ENABLE_CACHING:
         save_caches()
+
+# ---------- main ----------
+if __name__ == '__main__':
+    preprocess()
