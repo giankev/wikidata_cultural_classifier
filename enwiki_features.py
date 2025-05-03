@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from statistics import mean, median, pstdev
 from wiki_extractor import WikidataExtractor
 import math
+from requests.utils import requote_uri
 
 # ---------- MULTITHREADING & CSV ----------
 import pandas as pd
@@ -16,8 +17,9 @@ import time
 
 # ---------- CONFIG ----------
 
-INPUT_CSV = os.path.expanduser('~/content/train.csv')
-OUTPUT_CSV = os.path.expanduser('~/content/train_augmented.csv')
+INPUT_CSV = os.path.expanduser('~/content/valid.csv')
+OUTPUT_CSV = os.path.expanduser('~/content/valid_augmented.csv')
+
 WD_CACHE_FILE = os.path.expanduser('~/content/wd_cache.pkl')
 HTML_CACHE_FILE = os.path.expanduser('~/content/html_cache.pkl')
 
@@ -83,6 +85,21 @@ def extract_linked_items_stats(links: dict) -> dict:
     for title, href in links.items():
         if href.startswith('/wiki/') and ':' not in href:
             wiki_title = requests.utils.unquote(href.split('/wiki/')[-1])
+
+            # account for redirects
+            full_url = requote_uri("https://en.wikipedia.org" + href)
+            resp = requests.get(full_url, allow_redirects=True, timeout=5)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            can = soup.find('link', rel='canonical')
+            if can and can.has_attr('href'):
+                # extract only title
+                wiki_title = requests.utils.unquote(can['href'].split('/wiki/')[-1])
+                wiki_title = wiki_title.partition("#")[0] # remove url comments for wikidata query
+            else:
+                # fallback all’href original
+                wiki_title = requests.utils.unquote(href.split('/wiki/')[-1])
+
             params = {
                 'action': 'wbgetentities',
                 'sites': 'enwiki',
