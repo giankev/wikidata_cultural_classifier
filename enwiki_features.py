@@ -6,6 +6,7 @@ from statistics import mean, median, pstdev
 from wiki_extractor import WikidataExtractor
 import math
 from requests.utils import requote_uri
+from requests.exceptions import HTTPError, RequestException
 
 # ---------- MULTITHREADING & CSV ----------
 import pandas as pd
@@ -52,10 +53,18 @@ if os.path.exists(HTML_CACHE_FILE):
 
 # ---------- HELPERS ----------
 def fill_missing_stats(stats):
+    """
+    Ensure that all EXPECTED_KEYS are present in stats.
+    If a key is missing, fills it with 0 (or empty string for 'title').
+    """
     return {k: stats.get(k, 0 if k != 'title' else '') for k in EXPECTED_KEYS}
 
 
 def extract_linked_words(html: str) -> dict:
+    """
+    Parse the HTML of a Wikipedia page and return a dict mapping
+    each unique link-title to its href found in <p> tags.
+    """
     soup = BeautifulSoup(html, 'html.parser')
     content_div = soup.find('div', id='bodyContent')
     if not content_div:
@@ -72,6 +81,10 @@ def extract_linked_words(html: str) -> dict:
 
 
 def get_paragraph_len(html: str) -> int:
+    """
+    Return the total number of characters across all <p> tags
+    inside the main content div; -1 if content div not found.
+    """
     soup = BeautifulSoup(html, 'html.parser')
     content_div = soup.find('div', id='bodyContent')
     if not content_div:
@@ -79,7 +92,38 @@ def get_paragraph_len(html: str) -> int:
     return sum(len(p.text) for p in content_div.find_all("p"))
 
 
+def retry_request(func, *args, tries=3, backoff=1, **kwargs):
+    """
+    Call func(*args, **kwargs). On HTTPError 429 or timeout, wait for `backoff` seconds,
+    double backoff, retry up to `tries` times.
+    """
+    delay = backoff
+    for attempt in range(1, tries+1):
+        try:
+            resp = func(*args, **kwargs)
+            resp.raise_for_status()
+            return resp
+        except HTTPError as e:
+            status = getattr(e.response, "status_code", None)
+            if status == 429 and attempt < tries:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+        except RequestException:  # network problem, timeout, etc.
+            if attempt < tries:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+
+
 def extract_linked_items_stats(links: dict) -> dict:
+    """
+    Given a dict of {title: href} from extract_linked_words,
+    query each linked Wikipedia related wikidata item, fetches 
+    its Wikidata sitelink count, and returns mean/median/std of those counts.
+    """
     sitelinks_counts = []
 
     for title, href in links.items():
@@ -88,7 +132,7 @@ def extract_linked_items_stats(links: dict) -> dict:
 
             # account for redirects
             full_url = requote_uri("https://en.wikipedia.org" + href)
-            resp = requests.get(full_url, allow_redirects=True, timeout=5)
+            resp = retry_request(requests.get, full_url, allow_redirects=True, timeout=5)
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, 'html.parser')
             can = soup.find('link', rel='canonical')
@@ -129,6 +173,15 @@ def extract_linked_items_stats(links: dict) -> dict:
 
 
 def process_item(identifier: str) -> dict:
+    """
+    For a single Wikidata Q‑ID:
+    1. Look up its enwiki URL via WikidataExtractor.
+    2. Fetch the page HTML.
+    3. Extract <p>‑link stats via extract_linked_words.
+    4. Compute page_length + num_links.
+    5. Compute linked‐items sitelink statistics.
+    Returns a dict with all EXPECTED_KEYS.
+    """
     wd = WikidataExtractor(identifier)
     sitelinks = wd.get_sitelinks()
     enwiki = sitelinks.get('enwiki')
@@ -139,8 +192,7 @@ def process_item(identifier: str) -> dict:
     title = enwiki['title']
 
     try:
-        resp = session.get(url, timeout=10)
-        resp.raise_for_status()
+        resp = retry_request(session.get, url, timeout=10)
         html = resp.text
     except Exception as e:
         raise RuntimeError(f"Error fetching HTML from {url}: {e}")
@@ -160,6 +212,11 @@ def process_item(identifier: str) -> dict:
 
 
 def _process_row(idx, item_url):
+    """
+    Worker wrapper for multiprocessing: given row index & Wikidata URL,
+    calls process_item and fills missing stats on error.
+    Returns (idx, stats_dict).
+    """
     try:
         stats = process_item(item_url)
         stats = fill_missing_stats(stats)
@@ -177,7 +234,7 @@ def save_caches():
         pickle.dump(html_cache, f)
 
 
-def preprocess(input_csv = INPUT_CSV, output_csv = OUTPUT_CSV, num_workers = MAX_WORKERS):
+def enwiki_augment(input_csv = INPUT_CSV, output_csv = OUTPUT_CSV, num_workers = MAX_WORKERS):
     df = pd.read_csv(input_csv).drop(columns=['description'], errors='ignore')
     total = len(df)
     results = {}
@@ -209,4 +266,4 @@ def preprocess(input_csv = INPUT_CSV, output_csv = OUTPUT_CSV, num_workers = MAX
 
 # ---------- main ----------
 if __name__ == '__main__':
-    preprocess()
+    enwiki_augment()
