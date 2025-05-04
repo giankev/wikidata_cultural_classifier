@@ -152,7 +152,7 @@ class CustomData:
             print("Handling Missing Values: Nessuna riga con NaN trovata.")
 
         if columns_to_drop is None:
-            columns_to_drop = ["item", "name", "description", "subcategory"]
+            columns_to_drop = ["name", "description", "subcategory"]
 
         df_cleaned = df_cleaned.drop(columns=columns_to_drop)
 
